@@ -1,16 +1,16 @@
-# File to include, use parent CMakelists path
+find_package(ament_cmake_gtest REQUIRED)
 
-# Add mocks library
-set(MOCK_SOURCES
-  tests/mocks/aerial_platform/mock_aerial_platform.cpp
-  tests/mocks/executor_thread_util/executor_thread_util.cpp
-)
+file(GLOB TEST_SOURCES *.cpp)
 
-add_library(${MOCKS_LIBRARY_NAME} SHARED ${MOCK_SOURCES})
-ament_target_dependencies(${MOCKS_LIBRARY_NAME} ${PROJECT_DEPENDENCIES})
+# create a test executable for each test file
+foreach(TEST_SOURCE ${TEST_SOURCES})
 
-install(
-  DIRECTORY tests/mocks/
-  DESTINATION include/${PROJECT_NAME}/${MOCKS_LIBRARY_NAME}/
-  FILES_MATCHING PATTERN "*.hpp"
-)
+  get_filename_component(_src_filename ${TEST_SOURCE} NAME)
+  string(LENGTH ${_src_filename} name_length)
+  math(EXPR final_length "${name_length}-4") # remove .cpp of the name
+  string(SUBSTRING ${_src_filename} 0 ${final_length} TEST_NAME)
+
+  ament_add_gtest(${TEST_NAME} ${TEST_SOURCE})
+  ament_target_dependencies(${TEST_NAME} ${PROJECT_DEPENDENCIES})
+  target_link_libraries(${TEST_NAME} as2_core gtest_main ${PROJECT_NAME} yaml-cpp)
+endforeach()

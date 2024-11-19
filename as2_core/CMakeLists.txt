@@ -51,13 +51,12 @@ set(PROJECT_DEPENDENCIES
     yaml-cpp
     image_transport
     cv_bridge
+    GeographicLib
     geographic_msgs)
 
 foreach(DEPENDENCY ${PROJECT_DEPENDENCIES})
   find_package(${DEPENDENCY} REQUIRED)
 endforeach()
-
-find_package(GeographicLib REQUIRED)
 
 # Pybind11
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
@@ -85,10 +84,6 @@ add_library(${PROJECT_NAME} STATIC ${SOURCE_CPP_FILES})
 target_link_libraries(${PROJECT_NAME} yaml-cpp)
 target_link_libraries(${PROJECT_NAME} ${GeographicLib_LIBRARIES})
 
-# Mocks library
-set(MOCKS_LIBRARY_NAME mocks)
-include(tests/mocks/CMakeLists.txt)
-
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -99,6 +94,10 @@ ament_export_dependencies(${PROJECT_DEPENDENCIES})
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
+
+# Mocks library
+set(MOCKS_LIBRARY_NAME mocks)
+include(tests/mocks/CMakeLists.txt)
 
 # Python bindings
 pybind11_add_module(as2_names src/_as2_core_pybind11.cpp)
