@@ -56,6 +56,10 @@ public:
   }
 
   virtual void on_setup() = 0;
+
+  virtual ~MapServerBase()
+  {
+  }
 };
 }  // namespace as2_map_server_plugin_base
 
