@@ -57,6 +57,10 @@ public:
   virtual bool is_steady() const = 0;
   virtual void reset() = 0;
   virtual void set_period(std::chrono::nanoseconds period) = 0;
+  virtual ~RateBase()
+  {
+  }
+  
 };
 
 using std::chrono::duration;
